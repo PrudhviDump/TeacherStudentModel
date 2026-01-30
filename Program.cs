@@ -28,6 +28,17 @@ builder.Services.Configure<EmailSettings>(
     builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<StudentService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy
+            .WithOrigins("http://localhost:3000") // React local
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
+
+
 
 //builder.Services.AddScoped<IEmailService, EmailService>();
 
@@ -40,7 +51,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors(builder =>
+{
+    builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader();
+});
+//app.UseCors("AllowMvc");
+app.UseCors("AllowReactApp");
+// MUST be before MapControllers
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
